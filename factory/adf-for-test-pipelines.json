@@ -1,0 +1,15 @@
+{
+	"name": "adf-for-test-pipelines",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned,UserAssigned",
+		"principalId": "cffd70f5-8ad8-48eb-98e3-8631c9506062",
+		"tenantId": "71230159-a9b7-45c9-a0f0-49c0bac0962b",
+		"userAssignedIdentities": {
+			"/subscriptions/f8b590ca-1ac0-42b2-a7c6-fac0e6506885/resourcegroups/rg-managed-entity/providers/Microsoft.ManagedIdentity/userAssignedIdentities/managed-entity-for-adf": {
+				"clientId": "9c5eec11-a09a-44c7-b21e-a048d5671334",
+				"principalId": "22d9d0fe-0f61-4944-a2eb-2059a6504f6b"
+			}
+		}
+	}
+}
