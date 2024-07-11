@@ -12,17 +12,34 @@
 					"name": "ReadInputFile"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CreateStageFile",
+						"type": "DatasetReference"
+					},
+					"name": "GenertaeStageFile"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Validation"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
-				"          {_col0_} as string,",
-				"          {_col1_} as string,",
-				"          {_col2_} as string",
+				"          oktaId as string,",
+				"          newFsrAccountNumber as string,",
+				"          prin as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> ReadInputFile"
+				"     ignoreNoFilesFound: false) ~> ReadInputFile",
+				"ReadInputFile filter(isNull(oktaId) || trim(oktaId) == '' || upper(trim(oktaId)) == 'NULL') ~> Validation",
+				"Validation sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> GenertaeStageFile"
 			]
 		}
 	}
