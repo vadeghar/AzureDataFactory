@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "InputFileToStageFile",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -35,7 +35,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> ReadInputFile",
-				"ReadInputFile filter(isNull(oktaId) || trim(oktaId) == '' || upper(trim(oktaId)) == 'NULL') ~> Validation",
+				"ReadInputFile filter(!isNull(oktaId) && trim(oktaId) != '' && upper(trim(oktaId)) != 'NULL') ~> Validation",
 				"Validation sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
