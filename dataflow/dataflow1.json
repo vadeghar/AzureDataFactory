@@ -16,7 +16,9 @@
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          {oktaId|newFsrAccountNumber|prin} as string",
+				"          {_col0_} as string,",
+				"          {_col1_} as string,",
+				"          {_col2_} as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
