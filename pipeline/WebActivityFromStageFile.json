@@ -17,7 +17,31 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "InputFileToStageFile",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"FileName": {
+								"value": "'@{concat(pipeline().RunId, '.csv')}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"GenrateStage": {
+								"FileName": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceParameters": {
+							"GenrateStage": {
+								"schemaLinkedService": {
+									"FileName": {
+										"value": "'stage-'+$processId+'.csv'",
+										"type": "Expression"
+									}
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -31,7 +55,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "StageFileDataFlow",
+						"activity": "LookupEachRow",
 						"dependencyConditions": [
 							"Completed"
 						]
@@ -40,7 +64,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('StageFileDataFlow').output.value",
+						"value": "@activity('LookupEachRow').output.value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -60,7 +84,8 @@
 								"method": "POST",
 								"url": "https://sb-for-test-queues.servicebus.windows.net/items-queue/messages",
 								"body": {
-									"message": "Hello, World34!"
+									"value": "{\n    \"oktaId\": \"@{item().oktaId}\",\n    \"newNamespace\": \"breadcashback\",\n    \"processId\": \"@{pipeline().RunId}\"\n}",
+									"type": "Expression"
 								},
 								"authentication": {
 									"type": "MSI",
@@ -69,6 +94,50 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "LookupEachRow",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "StageFileDataFlow",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "CreateStageFile",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": {
+								"value": "@concat(pipeline().RunId, '.csv')",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],

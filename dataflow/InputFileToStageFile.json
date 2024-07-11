@@ -18,28 +18,40 @@
 						"referenceName": "CreateStageFile",
 						"type": "DatasetReference"
 					},
-					"name": "GenertaeStageFile"
+					"name": "GenrateStage"
 				}
 			],
 			"transformations": [
 				{
-					"name": "Validation"
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     FileName as string",
+				"}",
 				"source(output(",
 				"          oktaId as string,",
-				"          newFsrAccountNumber as string,",
-				"          prin as string",
+				"          newFsrAccountNumber as long,",
+				"          prin as short",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> ReadInputFile",
-				"ReadInputFile filter(!isNull(oktaId) && trim(oktaId) != '' && upper(trim(oktaId)) != 'NULL') ~> Validation",
-				"Validation sink(allowSchemaDrift: true,",
+				"filter1 derive(processId = \"test\",",
+				"          status = \"Success\",",
+				"          step = \"Step-1\",",
+				"          failureReason = \"\") ~> derivedColumn1",
+				"ReadInputFile filter(!isNull(oktaId) && trim(oktaId) != '' && upper(trim(oktaId)) != 'NULL') ~> filter1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     partitionFileNames:[($FileName)],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> GenertaeStageFile"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> GenrateStage"
 			]
 		}
 	}
