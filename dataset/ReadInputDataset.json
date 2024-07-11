@@ -1,0 +1,28 @@
+{
+	"name": "ReadInputDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "oktanamespace-update-source.txt",
+				"container": "input-file"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": false,
+			"quoteChar": null
+		},
+		"schema": [
+			{
+				"name": "oktaId|newFsrAccountNumber|prin",
+				"type": "String"
+			}
+		]
+	}
+}
